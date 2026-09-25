@@ -21,4 +21,15 @@ class CategoriaRepository extends BaseRepository implements CategoriaRepositoryI
     {
         return Categoria::all();
     }
+
+    public function find(int $id)
+    {
+        return Categoria::find($id);
+    }
+
+    public function update(array $data, Categoria $categoria)
+    {
+        return $categoria->update($data);
+    }
+
 }

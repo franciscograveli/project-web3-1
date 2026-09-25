@@ -13,7 +13,7 @@ class CategoriaPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class CategoriaPolicy
      */
     public function view(User $user, Categoria $categoria): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class CategoriaPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class CategoriaPolicy
      */
     public function update(User $user, Categoria $categoria): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +45,7 @@ class CategoriaPolicy
      */
     public function delete(User $user, Categoria $categoria): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class CategoriaPolicy
      */
     public function restore(User $user, Categoria $categoria): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +61,6 @@ class CategoriaPolicy
      */
     public function forceDelete(User $user, Categoria $categoria): bool
     {
-        return false;
+        return true;
     }
 }
