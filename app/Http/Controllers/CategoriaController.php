@@ -12,6 +12,7 @@ class CategoriaController extends Controller
         private CategoriaService $categoriaService
     ) {}
 
+
     public function index()
     {
         return $this->categoriaService->list();

@@ -18,6 +18,10 @@ class Categoria extends Model
 
     public $timestamps = true;
 
+    public function livros()
+    {
+        return $this->hasMany(Livro::class, 'idCategoria');
+    }
 
     use HasFactory;
 }
