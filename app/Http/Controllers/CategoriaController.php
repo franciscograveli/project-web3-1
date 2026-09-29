@@ -4,48 +4,48 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoriaRequest;
 use App\Http\Requests\UpdateCategoriaRequest;
+use App\Http\Resources\CategoriaResource;
 use App\Models\Categoria;
 use App\Services\CategoriaService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+
 class CategoriaController extends Controller
 {
     public function __construct(
         private CategoriaService $categoriaService
     ) {}
 
-
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
-        return $this->categoriaService->list();
+        return CategoriaResource::collection($this->categoriaService->list());
     }
 
-    public function store(StoreCategoriaRequest $request)
+    public function store(StoreCategoriaRequest $request): CategoriaResource
     {
-        return $this->categoriaService->create(
-            $request->validated()
+        return new CategoriaResource(
+            $this->categoriaService->create($request->validated())
         );
     }
 
-    public function show(Categoria $categoria)
+    public function show(Categoria $categoria): CategoriaResource
     {
-        return $categoria;
+        return new CategoriaResource($this->categoriaService->show($categoria));
     }
 
-    public function update(
-        UpdateCategoriaRequest $request,
-        Categoria $categoria
-    ) {
-        return $this->categoriaService->update(
-            $request->validated(),
-            $categoria
+    public function update(UpdateCategoriaRequest $request, Categoria $categoria): CategoriaResource
+    {
+        return new CategoriaResource(
+            $this->categoriaService->update($request->validated(), $categoria)
         );
     }
 
-    public function destroy(Categoria $categoria)
+    public function destroy(Categoria $categoria): JsonResponse
     {
         $this->categoriaService->delete($categoria);
 
         return response()->json([
-            'message' => 'Categoria deletada com sucesso'
+            'message' => 'Categoria deletada com sucesso',
         ]);
     }
 }
