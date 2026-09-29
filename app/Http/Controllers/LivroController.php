@@ -4,63 +4,48 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreLivroRequest;
 use App\Http\Requests\UpdateLivroRequest;
+use App\Http\Resources\LivroResource;
 use App\Models\Livro;
+use App\Services\LivroService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class LivroController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(
+        private LivroService $livroService
+    ) {}
+
+    public function index(): AnonymousResourceCollection
     {
-        //
+        return LivroResource::collection($this->livroService->list());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreLivroRequest $request): LivroResource
     {
-        //
+        return new LivroResource(
+            $this->livroService->create($request->validated())
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreLivroRequest $request)
+    public function show(Livro $livro): LivroResource
     {
-        //
+        return new LivroResource($this->livroService->show($livro));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Livro $livro)
+    public function update(UpdateLivroRequest $request, Livro $livro): LivroResource
     {
-        //
+        return new LivroResource(
+            $this->livroService->update($request->validated(), $livro)
+        );
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Livro $livro)
+    public function destroy(Livro $livro): JsonResponse
     {
-        //
-    }
+        $this->livroService->delete($livro);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateLivroRequest $request, Livro $livro)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Livro $livro)
-    {
-        //
+        return response()->json([
+            'message' => 'Livro deletado com sucesso',
+        ]);
     }
 }

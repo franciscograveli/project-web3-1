@@ -12,7 +12,7 @@ class StoreLivroRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,13 @@ class StoreLivroRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'titulo' => ['required', 'string', 'max:255'],
+            'isbn' => ['required', 'string', 'max:45', 'unique:livros,isbn'],
+            'ano_publicacao' => ['required', 'integer', 'min:0', 'max:'.now()->year],
+            'descricao' => ['required', 'string', 'max:255'],
+            'paginas' => ['required', 'integer', 'min:1'],
+            'autor_id' => ['required', 'integer', 'exists:autores,id'],
+            'categoria_id' => ['required', 'integer', 'exists:categorias,id'],
         ];
     }
 }
