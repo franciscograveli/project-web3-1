@@ -18,7 +18,10 @@ class AutorFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nome' => fake()->unique()->firstName(),
+            'nacionalidade' => fake()->countryCode(),
+            'nascimento' => fake()->date(),
+            'biografia' => fake()->optional()->paragraph(),
         ];
     }
 }
