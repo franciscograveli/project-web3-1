@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Database\Factories\CategoriaFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Categoria extends Model
 {
-    /** @use HasFactory<\Database\Factories\CategoriaFactory> */
+    /** @use HasFactory<CategoriaFactory> */
+    use HasFactory;
+
     protected $table = 'categorias';
 
     protected $fillable = ['nome', 'descricao'];
@@ -18,10 +22,8 @@ class Categoria extends Model
 
     public $timestamps = true;
 
-    public function livros()
+    public function livros(): HasMany
     {
-        return $this->hasMany(Livro::class, 'idCategoria');
+        return $this->hasMany(Livro::class);
     }
-
-    use HasFactory;
 }

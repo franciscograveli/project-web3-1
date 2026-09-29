@@ -4,20 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Livro extends Model
 {
     /** @use HasFactory<\Database\Factories\LivroFactory> */
+    use HasFactory;
+
     protected $table = 'livros';
 
     protected $fillable = [
         'titulo',
         'isbn',
-        'anopublicacao',
+        'ano_publicacao',
         'descricao',
         'paginas',
-        'idAutor',
-        'idCategoria',
+        'autor_id',
+        'categoria_id',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -26,14 +29,13 @@ class Livro extends Model
 
     public $timestamps = true;
 
-    public function autor()
+    public function autor(): BelongsTo
     {
-        return $this->belongsTo(Autor::class, 'idAutor');
+        return $this->belongsTo(Autor::class);
     }
 
-    public function categoria()
+    public function categoria(): BelongsTo
     {
-        return $this->belongsTo(Categoria::class, 'idCategoria');
+        return $this->belongsTo(Categoria::class);
     }
-    use HasFactory;
 }

@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Autor extends Model
 {
     /** @use HasFactory<\Database\Factories\AutorFactory> */
+    use HasFactory;
 
     protected $table = 'autores';
 
@@ -18,17 +20,21 @@ class Autor extends Model
         'biografia',
     ];
 
-    protected $dates = [
-        'nascimento',
-    ];
-
     protected $hidden = ['created_at', 'updated_at'];
+
+    protected $primaryKey = 'id';
 
     public $timestamps = true;
 
-    public function livros()
+    protected function casts(): array
     {
-        return $this->hasMany(Livro::class, 'idAutor');
+        return [
+            'nascimento' => 'date',
+        ];
     }
-    use HasFactory;
+
+    public function livros(): HasMany
+    {
+        return $this->hasMany(Livro::class);
+    }
 }
