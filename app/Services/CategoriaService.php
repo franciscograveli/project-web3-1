@@ -2,41 +2,32 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\CategoriaRepositoryInterface;
 use App\Models\Categoria;
+use App\Repositories\Contracts\CategoriaRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 
-/**
- * Class CategoriaService.
- */
 class CategoriaService
 {
+    public function __construct(private CategoriaRepositoryInterface $categoriaRepository) {}
 
-    public function __construct(private CategoriaRepositoryInterface $categoriaRepository)
-    {
-        $this->categoriaRepository = $categoriaRepository;
-    }
-    public function list()
+    public function list(): Collection
     {
         return $this->categoriaRepository->list();
     }
 
-    public function create(array $data)
+    public function create(array $data): Categoria
     {
+        /** @var Categoria */
         return $this->categoriaRepository->create($data);
     }
 
-    public function find(int $id)
-    {
-        return $this->categoriaRepository->find($id);
-    }
-
-    public function update(array $data, Categoria $categoria) : Categoria
+    public function update(array $data, Categoria $categoria): Categoria
     {
         return $this->categoriaRepository->update($data, $categoria);
     }
 
-    public function delete(Categoria $categoria): mixed
+    public function delete(Categoria $categoria): bool
     {
-        return $this->categoriaRepository->where('id', $categoria->id)->delete();
+        return (bool) $this->categoriaRepository->deleteById($categoria->id);
     }
 }

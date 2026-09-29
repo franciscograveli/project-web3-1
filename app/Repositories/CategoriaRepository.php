@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-use JasonGuru\LaravelMakeRepository\Repository\BaseRepository;
-//use Your Model
-use App\Repositories\Contracts\CategoriaRepositoryInterface;
 use App\Models\Categoria;
+use App\Repositories\Contracts\CategoriaRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
+use JasonGuru\LaravelMakeRepository\Repository\BaseRepository;
 
 class CategoriaRepository extends BaseRepository implements CategoriaRepositoryInterface
 {
@@ -17,19 +17,14 @@ class CategoriaRepository extends BaseRepository implements CategoriaRepositoryI
         return Categoria::class;
     }
 
-    public function list()
+    public function list(): Collection
     {
-        return Categoria::all();
+        return $this->orderBy('nome')->get();
     }
 
-    public function find(int $id)
+    public function update(array $data, Categoria $categoria): Categoria
     {
-        return Categoria::find($id);
+        /** @var Categoria */
+        return $this->updateById($categoria->id, $data);
     }
-
-    public function update(array $data, Categoria $categoria)
-    {
-        return $categoria->update($data);
-    }
-
 }
