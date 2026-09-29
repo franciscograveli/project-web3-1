@@ -2,51 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\UserResource;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\NewAccessToken;
 
 class AuthController extends Controller
 {
-    public function register(Request $request): JsonResponse
+    public function __construct(
+        private UserService $userService
+    ) {}
+
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
-
-        $user = User::create($data);
-
-        /** @var NewAccessToken */
-        $token = $user->createToken('api')->plainTextToken;
+        $user = $this->userService->create($request->validated());
 
         return response()->json([
-            'user' => $user,
-            'token' => $token,
+            'user' => new UserResource($user),
+            'token' => $user->createToken('api')->plainTextToken,
         ], 201);
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ]);
-
-        $user = User::where('email', $credentials['email'])->first();
-
-        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['As credenciais informadas estão incorretas.'],
-            ]);
-        }
+        $user = $this->userService->login(
+            $request->validated('email'),
+            $request->validated('password')
+        );
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $user->createToken('api')->plainTextToken,
         ]);
     }
@@ -58,5 +45,10 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Logout realizado com sucesso',
         ]);
+    }
+
+    public function me(Request $request): UserResource
+    {
+        return new UserResource($request->user());
     }
 }
