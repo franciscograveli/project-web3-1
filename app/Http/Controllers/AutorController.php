@@ -4,63 +4,48 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAutorRequest;
 use App\Http\Requests\UpdateAutorRequest;
+use App\Http\Resources\AutorResource;
 use App\Models\Autor;
+use App\Services\AutorService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AutorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(
+        private AutorService $autorService
+    ) {}
+
+    public function index(): AnonymousResourceCollection
     {
-        //
+        return AutorResource::collection($this->autorService->list());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreAutorRequest $request): AutorResource
     {
-        //
+        return new AutorResource(
+            $this->autorService->create($request->validated())
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAutorRequest $request)
+    public function show(Autor $autor): AutorResource
     {
-        //
+        return new AutorResource($this->autorService->show($autor));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Autor $autor)
+    public function update(UpdateAutorRequest $request, Autor $autor): AutorResource
     {
-        //
+        return new AutorResource(
+            $this->autorService->update($request->validated(), $autor)
+        );
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Autor $autor)
+    public function destroy(Autor $autor): JsonResponse
     {
-        //
-    }
+        $this->autorService->delete($autor);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAutorRequest $request, Autor $autor)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Autor $autor)
-    {
-        //
+        return response()->json([
+            'message' => 'Autor deletado com sucesso',
+        ]);
     }
 }

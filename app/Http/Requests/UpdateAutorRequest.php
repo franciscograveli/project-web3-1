@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateAutorRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class UpdateAutorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +24,15 @@ class UpdateAutorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nome' => [
+                'required',
+                'string',
+                'max:45',
+                Rule::unique('autores', 'nome')->ignore($this->route('autor')),
+            ],
+            'nacionalidade' => ['nullable', 'string', 'max:45'],
+            'nascimento' => ['required', 'date', 'before:today'],
+            'biografia' => ['nullable', 'string'],
         ];
     }
 }
