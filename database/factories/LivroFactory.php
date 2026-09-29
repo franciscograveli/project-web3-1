@@ -23,7 +23,7 @@ class LivroFactory extends Factory
             'titulo' => fake()->sentence(3),
             'isbn' => fake()->unique()->isbn13(),
             'ano_publicacao' => fake()->numberBetween(1900, 2025),
-            'descricao' => fake()->paragraph(),
+            'descricao' => fake()->sentence(),
             'paginas' => fake()->numberBetween(50, 500),
             'autor_id' => Autor::factory(),
             'categoria_id' => Categoria::factory(),

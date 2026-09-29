@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Categoria;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class CategoriaSeeder extends Seeder
 {
@@ -13,22 +12,15 @@ class CategoriaSeeder extends Seeder
      */
     public function run(): void
     {
-          DB::table('categorias')->insert([
-            [
-                'nome' => 'Fisica',
-                'descricao' => 'Descrição da Categoria 1',
-                'created_at' => now(),
-            ],
-            [
-                'nome' => 'Quimica',
-                'descricao' => 'Descrição da Categoria 2',
-                'created_at' => now(),
-            ],
-            [
-                'nome' => 'Ficção',
-                'descricao' => 'Descrição da Categoria 3',
-                'created_at' => now(),
-            ],
-        ]);
+        $categorias = [
+            ['nome' => 'Romance', 'descricao' => 'Obras de ficção em prosa com narrativa longa'],
+            ['nome' => 'Fantasia', 'descricao' => 'Histórias com elementos mágicos ou sobrenaturais'],
+            ['nome' => 'Ficção Científica', 'descricao' => 'Histórias baseadas em ciência e tecnologia'],
+            ['nome' => 'Tecnologia', 'descricao' => 'Livros técnicos sobre programação e computação'],
+        ];
+
+        foreach ($categorias as $categoria) {
+            Categoria::create($categoria);
+        }
     }
 }
