@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('autores', function (Blueprint $table) {
             $table->id();
-            $table->char('nome', 45)->unique();
-            $table->char('nacionalidade', 45)->nullable();
-            $table->date('nascimento')->nullable(false);
+            $table->string('nome', 45)->unique();
+            $table->string('nacionalidade', 45)->nullable();
+            $table->date('nascimento');
             $table->text('biografia')->nullable();
             $table->timestamps();
         });
