@@ -42,7 +42,7 @@ Construir uma API com um CRUD completo (criar, listar, consultar, atualizar e ex
 |---|---|
 | PHP 8.3+ | Linguagem do backend |
 | Laravel 13 | Framework da aplicação |
-| MySQL / MariaDB | Banco de dados |
+| MariaDB 11 (via Docker Compose) | Banco de dados. Também funciona com MySQL |
 | Laravel Sanctum | Autenticação por token |
 | `jason-guru/laravel-make-repository` | Base para a camada de repositórios |
 | PHPUnit | Testes automatizados |
@@ -180,6 +180,7 @@ database/
 ├── migrations/        estrutura das tabelas
 └── seeders/           dados de exemplo
 docs/                  collection do Postman
+docker-compose.yml     banco de dados (MariaDB)
 routes/api.php         rotas da API
 tests/Feature/         testes automatizados
 ```
@@ -197,33 +198,79 @@ tests/Feature/         testes automatizados
 
 ## 6. Como rodar o projeto
 
-**Pré-requisitos:** PHP 8.3+, Composer e MySQL (ou MariaDB) em execução.
+O banco de dados sobe com **Docker Compose**, então não é preciso instalar nem configurar MySQL/MariaDB na máquina. Os comandos abaixo são os mesmos no **Windows, Linux e macOS**.
+
+### Pré-requisitos
+
+- **PHP 8.3+** com as extensões `pdo_mysql`, `mbstring`, `openssl`, `ctype`, `tokenizer`, `xml` e `fileinfo` (e `pdo_sqlite`, para rodar os testes). No Windows, algumas vêm desativadas no `php.ini` e basta remover o `;` da linha (ex.: `extension=pdo_mysql`).
+- **Composer 2**
+- **Docker** com Compose v2: Docker Desktop (Windows/macOS) ou Docker Engine + plugin compose (Linux).
+
+### Passo a passo
 
 ```bash
-# 1. instalar as dependências
+# 1. instalar as dependências do PHP
 composer install
 
-# 2. criar o arquivo de configuração e a chave da aplicação
+# 2. subir o banco de dados (MariaDB) e esperar ficar pronto
+docker compose up -d --wait
+
+# 3. criar o arquivo de configuração (já vem com os dados do banco)
 cp .env.example .env
+
+# 4. gerar a chave da aplicação
 php artisan key:generate
-```
 
-3. Crie um banco chamado `biblioteca_api` no MySQL e ajuste `DB_USERNAME`, `DB_PASSWORD` (e `DB_PORT`, se necessário) no arquivo `.env`.
-
-```bash
-# 4. criar as tabelas e popular com dados de exemplo
+# 5. criar as tabelas e popular com dados de exemplo
 php artisan migrate --seed
 
-# 5. iniciar o servidor
+# 6. iniciar o servidor
 php artisan serve
 ```
 
+No passo 3, em PowerShell o `cp` funciona normalmente. No Prompt de Comando (`cmd`), use `copy .env.example .env`.
+
 A API fica disponível em `http://localhost:8000/api`.
+
+### Dados do banco
+
+O `.env.example` já vem preenchido com os dados do container, então não é preciso alterar nada:
+
+| Configuração | Valor |
+|---|---|
+| Host | `127.0.0.1` |
+| Porta | `3307` |
+| Banco | `biblioteca_api` |
+| Usuário | `biblioteca` |
+| Senha | `biblioteca` |
+
+A porta é `3307` (e não a padrão `3306`) para não conflitar com um MySQL que a pessoa já tenha instalado. O host é `127.0.0.1` de propósito: com `localhost`, Linux e macOS tentam conectar por socket local e falham. Para alterar a porta, mude o `ports` no `docker-compose.yml` e o `DB_PORT` no `.env`.
 
 O seeder cria 4 categorias, 4 autores, 5 livros e um usuário de teste:
 
 - **e-mail:** `test@example.com`
 - **senha:** `password`
+
+### Comandos úteis
+
+```bash
+docker compose ps                 # ver se o banco está rodando
+docker compose down               # parar o banco (os dados são mantidos)
+docker compose down -v            # parar e apagar os dados do banco
+php artisan migrate:fresh --seed  # recriar as tabelas e os dados de exemplo
+```
+
+### Sem Docker
+
+Também funciona com um MySQL ou MariaDB instalado na máquina. Crie o banco `biblioteca_api` e ajuste `DB_HOST`, `DB_PORT`, `DB_USERNAME` e `DB_PASSWORD` no `.env`.
+
+### Problemas comuns
+
+| Erro | Causa e solução |
+|---|---|
+| `could not find driver` | A extensão `pdo_mysql` do PHP está desativada. Ative no `php.ini`. |
+| `Connection refused` | O banco ainda está iniciando ou não está rodando. Confira com `docker compose ps` e suba com `docker compose up -d --wait`. |
+| `port is already allocated` | Outro programa usa a porta `3307`. Troque a porta no `docker-compose.yml` e no `.env`. |
 
 ## 7. Autenticação
 
@@ -397,13 +444,13 @@ curl -X POST http://localhost:8000/api/categorias \
 
 Os testes automatizados ficam em `tests/Feature` e cobrem autenticação, autores, categorias, livros e usuários: sucesso, validações, acesso sem token, permissões e paginação.
 
-Eles usam **SQLite em memória**, então não mexem no banco MySQL nem precisam dele:
+Eles usam **SQLite em memória**, então não mexem no banco de dados nem precisam do Docker:
 
 ```bash
 php artisan test
 ```
 
-Além dos testes automatizados, o fluxo completo (cadastro, login, CRUD de todos os recursos, permissões e logout) foi conferido manualmente contra o MySQL/MariaDB real.
+Além dos testes automatizados, o fluxo completo (cadastro, login, CRUD de todos os recursos, permissões e logout) foi conferido manualmente contra o MariaDB real.
 
 ## 13. Postman
 
