@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Categoria;
 use App\Repositories\Contracts\CategoriaRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use JasonGuru\LaravelMakeRepository\Repository\BaseRepository;
 
 class CategoriaRepository extends BaseRepository implements CategoriaRepositoryInterface
@@ -17,9 +17,9 @@ class CategoriaRepository extends BaseRepository implements CategoriaRepositoryI
         return Categoria::class;
     }
 
-    public function list(): Collection
+    public function list(int $perPage): LengthAwarePaginator
     {
-        return $this->orderBy('nome')->get();
+        return $this->orderBy('nome')->paginate($perPage);
     }
 
     public function update(array $data, Categoria $categoria): Categoria

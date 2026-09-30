@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -12,9 +12,9 @@ class UserService
 {
     public function __construct(private UserRepositoryInterface $userRepository) {}
 
-    public function list(): Collection
+    public function list(int $perPage): LengthAwarePaginator
     {
-        return $this->userRepository->list();
+        return $this->userRepository->list($perPage);
     }
 
     public function create(array $data): User

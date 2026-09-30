@@ -8,6 +8,7 @@ use App\Http\Resources\CategoriaResource;
 use App\Models\Categoria;
 use App\Services\CategoriaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CategoriaController extends Controller
@@ -16,9 +17,9 @@ class CategoriaController extends Controller
         private CategoriaService $categoriaService
     ) {}
 
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        return CategoriaResource::collection($this->categoriaService->list());
+        return CategoriaResource::collection($this->categoriaService->list($this->perPage($request)));
     }
 
     public function store(StoreCategoriaRequest $request): CategoriaResource

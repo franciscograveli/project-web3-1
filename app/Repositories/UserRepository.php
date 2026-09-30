@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use JasonGuru\LaravelMakeRepository\Repository\BaseRepository;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
@@ -17,9 +17,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         return User::class;
     }
 
-    public function list(): Collection
+    public function list(int $perPage): LengthAwarePaginator
     {
-        return $this->orderBy('name')->get();
+        return $this->orderBy('name')->paginate($perPage);
     }
 
     public function findByEmail(string $email): ?User

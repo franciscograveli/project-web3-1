@@ -8,6 +8,7 @@ use App\Http\Resources\AutorResource;
 use App\Models\Autor;
 use App\Services\AutorService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AutorController extends Controller
@@ -16,9 +17,9 @@ class AutorController extends Controller
         private AutorService $autorService
     ) {}
 
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        return AutorResource::collection($this->autorService->list());
+        return AutorResource::collection($this->autorService->list($this->perPage($request)));
     }
 
     public function store(StoreAutorRequest $request): AutorResource

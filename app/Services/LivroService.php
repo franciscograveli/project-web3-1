@@ -4,15 +4,15 @@ namespace App\Services;
 
 use App\Models\Livro;
 use App\Repositories\Contracts\LivroRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class LivroService
 {
     public function __construct(private LivroRepositoryInterface $livroRepository) {}
 
-    public function list(): Collection
+    public function list(int $perPage): LengthAwarePaginator
     {
-        return $this->livroRepository->list();
+        return $this->livroRepository->list($perPage);
     }
 
     public function show(Livro $livro): Livro

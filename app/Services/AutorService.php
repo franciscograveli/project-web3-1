@@ -5,15 +5,15 @@ namespace App\Services;
 use App\Exceptions\RegistroVinculadoException;
 use App\Models\Autor;
 use App\Repositories\Contracts\AutorRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AutorService
 {
     public function __construct(private AutorRepositoryInterface $autorRepository) {}
 
-    public function list(): Collection
+    public function list(int $perPage): LengthAwarePaginator
     {
-        return $this->autorRepository->list();
+        return $this->autorRepository->list($perPage);
     }
 
     public function show(Autor $autor): Autor

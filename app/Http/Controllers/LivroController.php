@@ -8,6 +8,7 @@ use App\Http\Resources\LivroResource;
 use App\Models\Livro;
 use App\Services\LivroService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class LivroController extends Controller
@@ -16,9 +17,9 @@ class LivroController extends Controller
         private LivroService $livroService
     ) {}
 
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        return LivroResource::collection($this->livroService->list());
+        return LivroResource::collection($this->livroService->list($this->perPage($request)));
     }
 
     public function store(StoreLivroRequest $request): LivroResource

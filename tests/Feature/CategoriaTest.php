@@ -86,4 +86,29 @@ class CategoriaTest extends TestCase
 
         $this->deleteJson("/api/categorias/{$livro->categoria_id}")->assertConflict();
     }
+
+    public function test_pagina_a_listagem(): void
+    {
+        Categoria::factory()->count(20)->create();
+
+        $this->getJson('/api/categorias')
+            ->assertOk()
+            ->assertJsonCount(15, 'data')
+            ->assertJsonPath('meta.total', 20)
+            ->assertJsonPath('meta.per_page', 15)
+            ->assertJsonPath('meta.last_page', 2);
+
+        $this->getJson('/api/categorias?per_page=8&page=3')
+            ->assertOk()
+            ->assertJsonCount(4, 'data')
+            ->assertJsonPath('meta.current_page', 3);
+    }
+
+    public function test_limita_per_page_ao_maximo_e_ao_minimo(): void
+    {
+        Categoria::factory()->count(20)->create();
+
+        $this->getJson('/api/categorias?per_page=9999')->assertOk()->assertJsonPath('meta.per_page', 100);
+        $this->getJson('/api/categorias?per_page=0')->assertOk()->assertJsonPath('meta.per_page', 1);
+    }
 }

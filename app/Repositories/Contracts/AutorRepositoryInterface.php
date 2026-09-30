@@ -3,12 +3,12 @@
 namespace App\Repositories\Contracts;
 
 use App\Models\Autor;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use JasonGuru\LaravelMakeRepository\Repository\RepositoryContract;
 
 interface AutorRepositoryInterface extends RepositoryContract
 {
-    public function list(): Collection;
+    public function list(int $perPage): LengthAwarePaginator;
 
     public function update(array $data, Autor $autor): Autor;
 }

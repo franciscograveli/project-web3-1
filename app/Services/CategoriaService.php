@@ -5,15 +5,15 @@ namespace App\Services;
 use App\Exceptions\RegistroVinculadoException;
 use App\Models\Categoria;
 use App\Repositories\Contracts\CategoriaRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CategoriaService
 {
     public function __construct(private CategoriaRepositoryInterface $categoriaRepository) {}
 
-    public function list(): Collection
+    public function list(int $perPage): LengthAwarePaginator
     {
-        return $this->categoriaRepository->list();
+        return $this->categoriaRepository->list($perPage);
     }
 
     public function show(Categoria $categoria): Categoria

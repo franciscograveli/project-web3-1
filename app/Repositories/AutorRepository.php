@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Autor;
 use App\Repositories\Contracts\AutorRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use JasonGuru\LaravelMakeRepository\Repository\BaseRepository;
 
 class AutorRepository extends BaseRepository implements AutorRepositoryInterface
@@ -17,9 +17,9 @@ class AutorRepository extends BaseRepository implements AutorRepositoryInterface
         return Autor::class;
     }
 
-    public function list(): Collection
+    public function list(int $perPage): LengthAwarePaginator
     {
-        return $this->orderBy('nome')->get();
+        return $this->orderBy('nome')->paginate($perPage);
     }
 
     public function update(array $data, Autor $autor): Autor
